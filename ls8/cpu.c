@@ -56,10 +56,21 @@ void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB
   case ALU_MUL:
     cpu->registers[0] = cpu->registers[regA] * cpu->registers[regB];
     break;
-    // TODO: implement more ALU ops
+
   case ADD:
     // add the value in two registers and store the result in register A
     cpu->registers[regA] = cpu->registers[regA] + cpu->registers[regB];
+    break;
+
+  case ALU_CMP:
+    // compare regA and regB
+    // flag register, 0b00000LGE
+    if (cpu->registers[regA] < cpu->registers[regB])
+      cpu->fl = 0b00000100;
+    else if (cpu->registers[regA] > cpu->registers[regB])
+      cpu->fl = 0b00000010;
+    else if (cpu->registers[regA] == cpu->registers[regB])
+      cpu->fl = 0b00000001;
     break;
   }
 }
@@ -103,6 +114,11 @@ void cpu_run(struct cpu *cpu)
     case PRN:
       printf("%d\n", cpu->registers[operandA]);
       cpu->pc += 2;
+      break;
+
+    case CMP:
+      alu(cpu, instruction, operandA, operandB);
+      cpu->pc += 3;
       break;
 
     case HLT:
