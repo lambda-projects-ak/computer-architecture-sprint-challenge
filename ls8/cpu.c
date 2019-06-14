@@ -50,14 +50,13 @@ void cpu_load(struct cpu *cpu, char *argv)
  */
 void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB)
 {
-
   switch (op)
   {
   case ALU_MUL:
     cpu->registers[0] = cpu->registers[regA] * cpu->registers[regB];
     break;
 
-  case ADD:
+  case ALU_ADD:
     // add the value in two registers and store the result in register A
     cpu->registers[regA] = cpu->registers[regA] + cpu->registers[regB];
     break;
@@ -129,6 +128,20 @@ void cpu_run(struct cpu *cpu)
     case JMP:
       // set PC to address stored in given register
       cpu->pc = cpu->registers[operandA];
+      break;
+
+    case JEQ:
+      if (cpu->fl == 1)
+        cpu->pc = cpu->registers[operandA];
+      else
+        cpu->pc += 2;
+      break;
+
+    case JNE:
+      if (cpu->fl != 1)
+        cpu->pc = cpu->registers[operandA];
+      else
+        cpu->pc += 2;
       break;
 
     // stack
