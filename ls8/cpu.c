@@ -125,6 +125,12 @@ void cpu_run(struct cpu *cpu)
       running = 0;
       break;
 
+    // jumps
+    case JMP:
+      // set PC to address stored in given register
+      cpu->pc = cpu->registers[operandA];
+      break;
+
     // stack
     case PUSH:
       cpu->registers[SP]--;
